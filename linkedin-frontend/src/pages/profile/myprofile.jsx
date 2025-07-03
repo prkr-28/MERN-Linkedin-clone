@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import Advertisement from '../../components/Advertisement/Advertisement';
+import Advertisement from '../../components/advertisement/advertisement';
 import Card from '../../components/card/card';
 import EditIcon from '@mui/icons-material/Edit';
-import Post from '../../components/post/Post';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import Post from '../../components/post/post';
 import AddIcon from '@mui/icons-material/Add';
 import Model from '../../components/model/model';
 import ImageModel from '../../components/imagemodel/imagemodel';
@@ -10,6 +11,8 @@ import EditProfileModel from '../../components/editprofilemodel/editprofilemodel
 import AboutModel from '../../components/editaboutmodel/editaboutmodel';
 import ExperienceModel from '../../components/editexperinecemodel/editexperiencemodel';
 import MessageModel from '../../components/messageModel/messagemodel';
+import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const Profile = () => {
   const [imagemodel, setImagemodel] = useState(false);
@@ -18,6 +21,8 @@ const Profile = () => {
   const [aboutModel, SetAboutModel] = useState(false);
   const [experienceModel, SetExperienceModel] = useState(false);
   const [messageModel, SetMessageModel] = useState(false);
+
+  const { id } = useParams();
 
   const handleInfoModel = () => {
     SetInfoModel(!infoModel);
@@ -190,6 +195,14 @@ const Profile = () => {
                 <div className="cursor-pointer shrink-0 w-[350px]">
                   <Post profile={1} />
                 </div>
+              </div>
+              <div className="w-full flex justify-center items-center">
+                <Link
+                  to={`/profile/${id}/activities`}
+                  className="p-2 rounded-xl cursor-pointer bg-gray-100 hover:bg-gray-200">
+                  Show all posts
+                  <ArrowRightAltIcon />
+                </Link>
               </div>
             </Card>
           </div>

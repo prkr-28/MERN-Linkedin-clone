@@ -12,6 +12,8 @@ import MyNetwork from './pages/network/mynetwork';
 import Resume from './pages/resume/resume';
 import Message from './pages/message/message';
 import Profile from './pages/profile/myprofile';
+import Activity from './pages/activities/activity';
+import Notification from './pages/notifications/notifications';
 
 function App() {
   const isLogin = true; // This should be replaced with actual login state management logic
@@ -25,8 +27,10 @@ function App() {
         <Route path="/feed" element={<Feed />} />
         <Route path="/mynetwork" element={<MyNetwork />} />
         <Route path="/resume" element={<Resume />} />
+        <Route path="/notifications" element={<Notification />} />
         <Route path="/messages" element={<Message />} />
         <Route path="/profile/:id" element={<Profile />} />
+        <Route path="/profile/:id/activities" element={<Activity />} />
       </Routes>
       <Footer />
     </div>

@@ -113,7 +113,7 @@ const NavbarV2 = () => {
           </div>
         </Link>
         <Link
-          to={'/notification'}
+          to={'/notifications'}
           className="flex flex-col items-center cursor-pointer">
           <NotificationsIcon
             sx={{

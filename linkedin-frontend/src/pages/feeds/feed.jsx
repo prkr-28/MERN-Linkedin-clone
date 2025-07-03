@@ -6,6 +6,7 @@ import Advertisement from '../../components/advertisement/advertisement';
 import Post from '../../components/post/post';
 import Model from '../../components/model/model';
 import AddModel from '../../components/addModel/addModel';
+import Loader from '../../components/loader/loader';
 
 const Feed = () => {
   const [postModel, setPostModel] = useState(false);
