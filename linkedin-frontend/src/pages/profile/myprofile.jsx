@@ -1,20 +1,64 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Advertisement from '../../components/Advertisement/Advertisement';
 import Card from '../../components/card/card';
 import EditIcon from '@mui/icons-material/Edit';
+import Post from '../../components/post/Post';
+import AddIcon from '@mui/icons-material/Add';
+import Model from '../../components/model/model';
+import ImageModel from '../../components/imagemodel/imagemodel';
+import EditProfileModel from '../../components/editprofilemodel/editprofilemodel';
+import AboutModel from '../../components/editaboutmodel/editaboutmodel';
+import ExperienceModel from '../../components/editexperinecemodel/editexperiencemodel';
+import MessageModel from '../../components/messageModel/messagemodel';
 
 const Profile = () => {
+  const [imagemodel, setImagemodel] = useState(false);
+  const [circularImage, setCircularImage] = useState(true);
+  const [infoModel, SetInfoModel] = useState(false);
+  const [aboutModel, SetAboutModel] = useState(false);
+  const [experienceModel, SetExperienceModel] = useState(false);
+  const [messageModel, SetMessageModel] = useState(false);
+
+  const handleInfoModel = () => {
+    SetInfoModel(!infoModel);
+  };
+  const handleAboutModel = () => {
+    SetAboutModel(!aboutModel);
+  };
+
+  const handleExperienceModel = () => {
+    SetExperienceModel(!experienceModel);
+  };
+
+  const handleMessageModel = () => {
+    SetMessageModel(!messageModel);
+  };
+
+  const handleImageModel = () => {
+    setImagemodel(!imagemodel);
+  };
+  const openImageModel = () => {
+    setImagemodel(true);
+    setCircularImage(false);
+  };
+  const handleCircularImageModelOpen = () => {
+    setImagemodel(true);
+    setCircularImage(true);
+  };
+
   return (
     <div className="px-18 xl:px-50 py-9 flex flex-col pt-12 gap-5 w-full mt-5 bg-gray-100">
       <div className="flex gap-5">
         {/* left side main section */}
-        <div className="w-full md:w-[70] flex flex-col gap-5">
+        <div className="w-full md:w-[70%] flex flex-col gap-5">
           {/* profile card... */}
           <div>
             <Card padding={0}>
               <div className="w-full h-fit">
                 <div className="relative w-full h-[200px]">
-                  <div className="absolute cursor-pointer top-3 right-3 z-20 w-[33px] flex justify-center items-center h-[35px] rounded-full p-3 bg-gray-200">
+                  <div
+                    onClick={openImageModel}
+                    className="absolute cursor-pointer top-3 right-3 z-20 w-[33px] flex justify-center items-center h-[35px] rounded-full p-3 bg-gray-200">
                     <EditIcon />
                   </div>
                   <img
@@ -23,7 +67,7 @@ const Profile = () => {
                     alt=""
                   />
 
-                  <div>
+                  <div onClick={handleCircularImageModelOpen}>
                     <img
                       src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dXNlciUyMHByb2ZpbGV8ZW58MHx8MHx8fDA%3D"
                       className="absolute top-[135px] left-6 w-[100px] h-[100px] rounded-full border-2 border-white"
@@ -33,7 +77,9 @@ const Profile = () => {
                 </div>
 
                 <div className="mt-10 relative px-8 py-2">
-                  <div className="absolute cursor-pointer top-0 right-3 z-50 w-[35px] flex justify-center items-center h-[35px] rounded-full p-3">
+                  <div
+                    onClick={handleInfoModel}
+                    className="absolute cursor-pointer top-0 right-3 z-50 w-[35px] flex justify-center items-center h-[35px] rounded-full p-3">
                     <EditIcon />
                   </div>
                   <div className="w-full">
@@ -64,7 +110,9 @@ const Profile = () => {
                       </div>
 
                       <div className="my-3 flex flex-wrap gap-3 sm:my-5 sm:gap-5">
-                        <div className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
+                        <div
+                          onClick={handleMessageModel}
+                          className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
                           Message
                         </div>
 
@@ -84,7 +132,7 @@ const Profile = () => {
               <div className="w-full">
                 <div className="flex justify-between items-center">
                   <div className="text-lg font-semibold mb-3">About</div>
-                  <div className="cursor-pointer">
+                  <div onClick={handleAboutModel} className="cursor-pointer">
                     <EditIcon />
                   </div>
                 </div>
@@ -124,13 +172,111 @@ const Profile = () => {
             </Card>
           </div>
           {/* activity section */}
-          <div></div>
+          <div>
+            <Card padding={1}>
+              <div className="flex justify-between items-center">
+                <div className="text-lg font-semibold mb-3">Activities</div>
+              </div>
+              <div className="cursor-pointer px-3 py-1 w-fit border-1 rounded-4xl bg-green-800 text-white font-semibold">
+                Posts
+              </div>
+              <div className="overflow-x-auto my-2 flex gap-2 overflow-y-hidden w-full">
+                <div className="cursor-pointer shrink-0 w-[350px]">
+                  <Post profile={1} />
+                </div>
+                <div className="cursor-pointer shrink-0 w-[350px]">
+                  <Post profile={1} />
+                </div>
+                <div className="cursor-pointer shrink-0 w-[350px]">
+                  <Post profile={1} />
+                </div>
+              </div>
+            </Card>
+          </div>
+          {/* experience section... */}
+          <div>
+            <Card padding={1}>
+              <div className="w-full">
+                <div className="w-full flex justify-between items-center mb-2">
+                  <div className="text-lg font-semibold">Experience</div>
+                  <div
+                    onClick={handleExperienceModel}
+                    className="cursor-pointer">
+                    <AddIcon />
+                  </div>
+                </div>
+                <div>
+                  <div className="p-2 border-t-1 border-gray-300 flex justify-between">
+                    <div>
+                      <div className="text-lg">SDE-I | Full Stack Engineer</div>
+                      <div className="text-sm text-gray-600">@Amazon</div>
+                      <div className="text-sm text-gray-600">
+                        March 2025 ,Present
+                      </div>
+                      <div className="text-sm text-gray-600">Delhi,India</div>
+                    </div>
+                    <div className="cursor-pointer">
+                      <EditIcon />
+                    </div>
+                  </div>
+                  <div className="p-2 border-t-1 border-gray-300 flex justify-between">
+                    <div>
+                      <div className="text-lg">SDE-I | Full Stack Engineer</div>
+                      <div className="text-sm text-gray-600">@Amazon</div>
+                      <div className="text-sm text-gray-600">
+                        March 2025 ,Present
+                      </div>
+                      <div className="text-sm text-gray-600">Delhi,India</div>
+                    </div>
+                    <div className="cursor-pointer">
+                      <EditIcon />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </div>
         </div>
         {/* right side section... */}
         <div className="w-full md:w-[30%] hidden md:block">
           <Advertisement />
         </div>
       </div>
+
+      {/* image model */}
+      {imagemodel && (
+        <Model title={'Upload Image'} closemodel={handleImageModel}>
+          <ImageModel isCircular={circularImage} />
+        </Model>
+      )}
+
+      {/* info model */}
+      {infoModel && (
+        <Model title={'Edit Profile'} closemodel={handleInfoModel}>
+          <EditProfileModel />
+        </Model>
+      )}
+
+      {/* About model */}
+      {aboutModel && (
+        <Model title={'Edit About'} closemodel={handleAboutModel}>
+          <AboutModel />
+        </Model>
+      )}
+
+      {/* Experience model */}
+      {experienceModel && (
+        <Model title={'Add Experience'} closemodel={handleExperienceModel}>
+          <ExperienceModel />
+        </Model>
+      )}
+
+      {/* Message model */}
+      {messageModel && (
+        <Model title={'Send Message'} closemodel={handleMessageModel}>
+          <MessageModel />
+        </Model>
+      )}
     </div>
   );
 };

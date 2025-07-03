@@ -7,7 +7,7 @@ const Model = (props) => {
       <div className="w-[55%] md:w-[50%] h-[400px] bg-white rounded-xl px-8 py-5 ">
         <div className="flex justify-between">
           <div className="flex gap-4 items-center">
-            <div className="text-xl text-gray-700">{props.title}</div>
+            <div className="text-xl font-semibold">{props.title}</div>
           </div>
           <div
             onClick={props.closemodel}
