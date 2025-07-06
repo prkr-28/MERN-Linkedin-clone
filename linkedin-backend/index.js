@@ -16,11 +16,15 @@ const userRouter = require('./routes/user');
 const postRouter = require('./routes/post');
 const notificationRouter = require('./routes/notification');
 const commentRouter = require('./routes/comment');
+const conversationRouter = require('./routes/conversation');
+const messageRouter = require('./routes/message');
 
 app.use('/api/auth', userRouter);
 app.use('/api/post', postRouter);
 app.use('/api/notification', notificationRouter);
 app.use('/api/comment', commentRouter);
+app.use('/api/conversation', conversationRouter);
+app.use('/api/message', messageRouter);
 
 app.listen(PORT, () => {
    console.log(`Server is running on port ${PORT}`);
