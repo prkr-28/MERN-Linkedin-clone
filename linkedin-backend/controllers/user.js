@@ -11,9 +11,9 @@ const cookieOptions = {
 
 exports.register = async (req, res) => {
    try {
-      let {name, email, password} = req.body;
+      let {f_name, email, password} = req.body;
 
-      if (!name || !email || !password) {
+      if (!f_name || !email || !password) {
          return res.status(400).json({message: 'All fields are required'});
       }
       // Check if user already exists
@@ -25,7 +25,7 @@ exports.register = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       // Create a new user
       const newUser = new User({
-         name: name,
+         f_name: f_name,
          email: email,
          password: hashedPassword,
       });
@@ -74,7 +74,7 @@ exports.login = async (req, res) => {
       // Respond with success
       return res
          .status(200)
-         .json({message: 'Login successful', userId: user._id});
+         .json({message: 'Login successful', user: user, token: token});
    } catch (error) {
       console.error('Error during login:', error);
       res.status(500).json({message: 'Internal server error'});
@@ -117,7 +117,7 @@ exports.googleLogin = async (req, res) => {
       // Respond with success
       return res.status(200).json({
          message: 'Google login successful',
-         userId: user._id,
+         user: user,
          name: user.name,
       });
    } catch (error) {
@@ -134,7 +134,10 @@ exports.updateUser = async (req, res) => {
          return res.status(404).json({message: 'User not found'});
       }
       // Update user details
-      const updatedUser = await User.findByIdAndUpdate(userexists._id, user);
+      const updatedUser = await User.findByIdAndUpdate(userexists._id, user, {
+         new: true,
+         runValidators: true,
+      });
       if (!updatedUser) {
          return res.status(400).json({message: 'Failed to update user'});
       }

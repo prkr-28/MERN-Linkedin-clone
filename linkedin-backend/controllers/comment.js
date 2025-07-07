@@ -30,7 +30,7 @@ exports.commentPost = async (req, res) => {
       // Populate user info after saving
       const populatedComment = await newComment.populate(
          'user',
-         'f_name headline profilePic'
+         'f_name profile_pic'
       );
 
       // Increment comment count safely
@@ -66,7 +66,7 @@ exports.getComments = async (req, res) => {
       }
 
       const comments = await CommentModel.find({post: postId})
-         .populate('user', 'f_name headline profilePic')
+         .populate('user', '-password')
          .sort({createdAt: -1});
 
       return res.status(200).json({comments: comments});

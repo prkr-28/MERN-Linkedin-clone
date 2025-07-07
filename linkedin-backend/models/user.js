@@ -59,12 +59,12 @@ const userSchema = new mongoose.Schema(
                default: '',
             },
             duration: {
-               type: Date,
-               default: null,
+               type: String,
+               default: '',
             },
             location: {
-               type: Date,
-               default: null,
+               type: String,
+               default: '',
             },
          },
       ],

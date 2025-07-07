@@ -4,10 +4,6 @@ exports.createPost = async (req, res) => {
    try {
       const {desc, imageLink} = req.body;
 
-      if (!desc) {
-         return res.status(400).json({message: 'Content is required'});
-      }
-
       const newPost = new postModel({
          desc,
          imageLink,
