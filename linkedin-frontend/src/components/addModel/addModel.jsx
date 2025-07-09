@@ -24,7 +24,6 @@ const AddModel = (props) => {
          )
          .then((res) => {
             window.location.reload();
-            toast.success('Post created successfully');
          })
          .catch((err) => {
             console.error(err);
@@ -68,7 +67,7 @@ const AddModel = (props) => {
                onChange={(e) => setDesc(e.target.value)}
                cols={65}
                rows={4}
-               className="border-2 border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+               className="border-2 border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500 overflow-x-auto"
                placeholder="What do you want to talk about?"></textarea>
          </div>
          {imageUrl && (

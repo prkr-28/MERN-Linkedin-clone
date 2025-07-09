@@ -57,6 +57,8 @@ const Profile = () => {
          setProfileData(profileRes.data.user);
          setPostData(postsRes.data.posts);
          setUserData(userRes.data.user);
+
+         localStorage.setItem('userinfo', JSON.stringify(profileRes.data.user));
       } catch (error) {
          console.error('Error fetching data:', error);
          toast.error(error.response?.data?.message || 'Failed to fetch data');
@@ -65,7 +67,7 @@ const Profile = () => {
 
    useEffect(() => {
       fetchData();
-   }, []);
+   }, [id]);
 
    const handleInfoModel = () => {
       SetInfoModel(!infoModel);
@@ -119,6 +121,142 @@ const Profile = () => {
       }
    };
 
+   const isIAmFriendToTheUser = () => {
+      let arr = profileData?.friends?.filter((item) => {
+         return item === userData?._id;
+      });
+
+      return arr?.length > 0;
+   };
+
+   const isIAmInPendingReqList = () => {
+      let arr = profileData?.pending_friends?.filter((item) => {
+         return item === userData?._id;
+      });
+
+      return arr?.length > 0;
+   };
+
+   const isUserIsInMyPendingReqList = () => {
+      let arr = userData?.pending_friends?.filter((item) => {
+         return item === profileData?._id;
+      });
+
+      return arr?.length > 0;
+   };
+
+   const checkConnectionStatus = () => {
+      if (isIAmFriendToTheUser()) {
+         return 'Disconnect';
+      } else if (isIAmInPendingReqList()) {
+         return 'Remove Request';
+      } else if (isUserIsInMyPendingReqList()) {
+         return 'Approve Request';
+      } else {
+         return 'Connect';
+      }
+   };
+
+   const handleConnectionRequests = async () => {
+      if (isIAmFriendToTheUser()) {
+         // Disconnect
+         await axios
+            .delete(
+               `http://localhost:4000/api/auth/removeConnection/${profileData?._id}`,
+               {withCredentials: true}
+            )
+            .then((res) => {
+               toast.success(res.data.message);
+               setTimeout(() => {
+                  window.location.reload();
+               }, 2000);
+            })
+            .catch((err) => {
+               toast.error(err.response?.data?.message);
+            });
+      } else if (isIAmInPendingReqList()) {
+         // Cancel connection Request
+         await axios
+            .put(
+               'http://localhost:4000/api/auth/unDoConnectionRequest',
+               {receiver: profileData?._id},
+               {withCredentials: true}
+            )
+            .then((res) => {
+               toast.success(res.data.message);
+               setTimeout(() => {
+                  window.location.reload();
+               }, 2000);
+            })
+            .catch((err) => {
+               toast.error(err.response?.data?.message);
+            });
+      } else if (isUserIsInMyPendingReqList()) {
+         // Approve Request
+         await axios
+            .post(
+               'http://localhost:4000/api/auth/acceptConnectionRequest',
+               {sender: profileData?._id},
+               {withCredentials: true}
+            )
+            .then((res) => {
+               toast.success(res.data.message);
+               setTimeout(() => {
+                  window.location.reload();
+               }, 2000);
+            })
+            .catch((err) => {
+               toast.error(err.response?.data?.message);
+            });
+      } else {
+         // Send Request
+         await axios
+            .post(
+               'http://localhost:4000/api/auth/sendConnectionRequest',
+               {receiver: profileData?._id},
+               {withCredentials: true}
+            )
+            .then((res) => {
+               toast.success(res.data.message);
+               setTimeout(() => {
+                  window.location.reload();
+               }, 2000);
+            })
+            .catch((err) => {
+               toast.error(err.response?.data?.message);
+            });
+      }
+   };
+
+   const handleLogOut = () => {
+      axios
+         .post(
+            'http://localhost:4000/api/auth/logout',
+            {},
+            {withCredentials: true}
+         )
+         .then((res) => {
+            localStorage.clear();
+            window.location.reload();
+         })
+         .catch((err) => {
+            toast.error(err.response?.data?.message);
+         });
+   };
+
+   const copyToClipBoard = () => {
+      const postUrl = `http://localhost:5173/profile/${id}`;
+      navigator.clipboard
+         .writeText(postUrl)
+         .then(() => {
+            toast.success('Post link copied to clipboard');
+         })
+         .catch((err) => {
+            console.error('Failed to copy link:', err);
+            toast.error('Failed to copy link');
+         });
+   };
+
    return (
       <div className="px-18 xl:px-50 py-9 flex flex-col pt-12 gap-5 w-full mt-5 bg-gray-100">
          <div className="flex gap-5">
@@ -129,18 +267,25 @@ const Profile = () => {
                   <Card padding={0}>
                      <div className="w-full h-fit">
                         <div className="relative w-full h-[200px]">
-                           <div
-                              onClick={openImageModel}
-                              className="absolute cursor-pointer top-3 right-3 z-20 w-[33px] flex justify-center items-center h-[35px] rounded-full p-3 bg-gray-200">
-                              <EditIcon />
-                           </div>
+                           {profileData?._id === userData?._id && (
+                              <div
+                                 onClick={openImageModel}
+                                 className="absolute cursor-pointer top-3 right-3 z-20 w-[33px] flex justify-center items-center h-[35px] rounded-full p-3 bg-gray-200">
+                                 <EditIcon />
+                              </div>
+                           )}
                            <img
                               src={profileData?.cover_pic}
                               className="w-full h-[200px] rounded-tr-lg rounded-tl-lg"
                               alt=""
                            />
 
-                           <div onClick={handleCircularImageModelOpen}>
+                           <div
+                              onClick={
+                                 profileData?._id === userData?._id
+                                    ? handleCircularImageModelOpen
+                                    : undefined
+                              }>
                               <img
                                  src={profileData?.profile_pic}
                                  className="absolute top-[135px] left-6 w-[100px] h-[100px] rounded-full border-2 border-white"
@@ -150,11 +295,13 @@ const Profile = () => {
                         </div>
 
                         <div className="mt-10 relative px-8 py-2">
-                           <div
-                              onClick={handleInfoModel}
-                              className="absolute cursor-pointer top-0 right-3 z-50 w-[35px] flex justify-center items-center h-[35px] rounded-full p-3">
-                              <EditIcon />
-                           </div>
+                           {profileData?._id === userData?._id && (
+                              <div
+                                 onClick={handleInfoModel}
+                                 className="absolute cursor-pointer top-0 right-3 z-50 w-[35px] flex justify-center items-center h-[35px] rounded-full p-3">
+                                 <EditIcon />
+                              </div>
+                           )}
                            <div className="w-full">
                               <div className="text-xl font-semibold">
                                  {profileData?.f_name}
@@ -178,25 +325,37 @@ const Profile = () => {
                                        Open to
                                     </div>
 
-                                    <div className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
+                                    <div
+                                       onClick={copyToClipBoard}
+                                       className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
                                        Share Profile
                                     </div>
 
-                                    <div className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
-                                       Logout
-                                    </div>
+                                    {profileData?._id === userData?._id && (
+                                       <div
+                                          onClick={handleLogOut}
+                                          className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
+                                          Logout
+                                       </div>
+                                    )}
                                  </div>
 
                                  <div className="my-3 flex flex-wrap gap-3 sm:my-5 sm:gap-5">
-                                    <div
-                                       onClick={handleMessageModel}
-                                       className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
-                                       Message
-                                    </div>
+                                    {isIAmFriendToTheUser() && (
+                                       <div
+                                          onClick={handleMessageModel}
+                                          className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
+                                          Message
+                                       </div>
+                                    )}
 
-                                    <div className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
-                                       Disconnect
-                                    </div>
+                                    {profileData?._id !== userData?._id && (
+                                       <div
+                                          onClick={handleConnectionRequests}
+                                          className="cursor-pointer p-2 border rounded-lg bg-blue-800 text-white font-semibold hover:bg-blue-900">
+                                          {checkConnectionStatus()}
+                                       </div>
+                                    )}
                                  </div>
                               </div>
                            </div>
@@ -212,11 +371,13 @@ const Profile = () => {
                            <div className="text-lg font-semibold mb-3">
                               About
                            </div>
-                           <div
-                              onClick={handleAboutModel}
-                              className="cursor-pointer">
-                              <EditIcon />
-                           </div>
+                           {profileData?._id === userData?._id && (
+                              <div
+                                 onClick={handleAboutModel}
+                                 className="cursor-pointer">
+                                 <EditIcon />
+                              </div>
+                           )}
                         </div>
                         <div className="text-sm text-gray-700">
                            {profileData?.about}
@@ -278,14 +439,16 @@ const Profile = () => {
                            </div>
                         )}
                      </div>
-                     <div className="w-full flex justify-center items-center">
-                        <Link
-                           to={`/profile/${id}/activities`}
-                           className="p-2 rounded-xl cursor-pointer bg-gray-100 hover:bg-gray-200">
-                           Show all posts
-                           <ArrowRightAltIcon />
-                        </Link>
-                     </div>
+                     {postData.length > 0 && (
+                        <div className="w-full flex justify-center items-center">
+                           <Link
+                              to={`/profile/${id}/activities`}
+                              className="p-2 rounded-xl cursor-pointer bg-gray-100 hover:bg-gray-200">
+                              Show all Activities
+                              <ArrowRightAltIcon />
+                           </Link>
+                        </div>
+                     )}
                   </Card>
                </div>
                {/* experience section... */}
@@ -296,11 +459,13 @@ const Profile = () => {
                            <div className="text-lg font-semibold">
                               Experience
                            </div>
-                           <div
-                              onClick={handleExperienceModel}
-                              className="cursor-pointer">
-                              <AddIcon />
-                           </div>
+                           {profileData?._id === userData?._id && (
+                              <div
+                                 onClick={handleExperienceModel}
+                                 className="cursor-pointer">
+                                 <AddIcon />
+                              </div>
+                           )}
                         </div>
                         <div>
                            {profileData?.experience?.length > 0 ? (
@@ -322,13 +487,18 @@ const Profile = () => {
                                           {item?.location}
                                        </div>
                                     </div>
-                                    <div
-                                       onClick={() =>
-                                          updateEditExperience(item?._id, item)
-                                       }
-                                       className="cursor-pointer">
-                                       <EditIcon />
-                                    </div>
+                                    {profileData?._id === userData?._id && (
+                                       <div
+                                          onClick={() =>
+                                             updateEditExperience(
+                                                item?._id,
+                                                item
+                                             )
+                                          }
+                                          className="cursor-pointer">
+                                          <EditIcon />
+                                       </div>
+                                    )}
                                  </div>
                               ))
                            ) : (
@@ -343,7 +513,7 @@ const Profile = () => {
             </div>
             {/* right side section... */}
             <div className="w-full md:w-[30%] hidden md:block">
-               <Advertisement profileData={profileData} />
+               <Advertisement profileData={userData} />
             </div>
          </div>
 
@@ -393,7 +563,7 @@ const Profile = () => {
          {/* Message model */}
          {messageModel && (
             <Model title={'Send Message'} closemodel={handleMessageModel}>
-               <MessageModel />
+               <MessageModel userData={userData} profileData={profileData} />
             </Model>
          )}
 

@@ -13,9 +13,9 @@ const Post = ({profile, item, profileData}) => {
    const [comment, setComment] = useState(false);
    const [comments, setComments] = useState([]);
    const [like, setLike] = useState(false);
-   const [likeCount, setLikeCount] = useState(item?.likes?.length || 0);
+   const [likeCount, setLikeCount] = useState();
    const [commentText, setCommentText] = useState('');
-   const [commentCount, SetCommentCount] = useState(item?.comments || 0);
+   const [commentCount, SetCommentCount] = useState();
    const descrip = item?.desc;
 
    const handlesendcomment = async (e) => {
@@ -48,7 +48,7 @@ const Post = ({profile, item, profileData}) => {
    useEffect(() => {
       const userId = profileData?._id;
       item?.likes?.map((item) => {
-         if (item.toString() === userId.toString()) {
+         if (item?.toString() === userId?.toString()) {
             setLike(true);
             return;
          } else {
@@ -57,6 +57,11 @@ const Post = ({profile, item, profileData}) => {
          }
       });
    }, []);
+
+   useEffect(() => {
+      setLikeCount(item?.likes?.length || 0);
+      SetCommentCount(item?.comments || 0);
+   }, [item]);
 
    const handleLikeFn = async () => {
       await axios
@@ -80,7 +85,7 @@ const Post = ({profile, item, profileData}) => {
          })
          .catch((err) => {
             console.error(err);
-            toast.error(err.response?.data?.message || 'Failed to like post');
+            toast.error(err.response?.data?.message);
          });
    };
 
@@ -97,6 +102,19 @@ const Post = ({profile, item, profileData}) => {
             toast.error(
                err.response?.data?.message || 'Failed to fetch comments'
             );
+         });
+   };
+
+   const copyToClipBoard = () => {
+      const postUrl = `http://localhost:5173/profile/${profileData?._id}/activities/${item?._id}`;
+      navigator.clipboard
+         .writeText(postUrl)
+         .then(() => {
+            toast.success('Post link copied to clipboard');
+         })
+         .catch((err) => {
+            console.error('Failed to copy link:', err);
+            toast.error('Failed to copy link');
          });
    };
    return (
@@ -176,7 +194,9 @@ const Post = ({profile, item, profileData}) => {
                      <InsertCommentIcon sx={{fontSize: 18}} />
                      <span className="text-sm">Comment</span>
                   </div>
-                  <div className="w-1/3 flex justify-center items-center gap-2 p-1 rounded-4xl hover:bg-gray-100 cursor-pointer">
+                  <div
+                     onClick={copyToClipBoard}
+                     className="w-1/3 flex justify-center items-center gap-2 p-1 rounded-4xl hover:bg-gray-100 cursor-pointer">
                      <SendIcon sx={{fontSize: 18}} />
                      <span className="text-sm">Share</span>
                   </div>

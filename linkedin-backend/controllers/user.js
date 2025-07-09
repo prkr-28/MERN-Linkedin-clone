@@ -276,6 +276,51 @@ exports.sendConnectionRequest = async (req, res) => {
    }
 };
 
+//the undoConnectionrequest is used to undo the connection request sent by the user
+exports.unDoConnectionRequest = async (req, res) => {
+   try {
+      const {receiver} = req.body;
+      const sender = req.user._id;
+
+      if (!receiver) {
+         return res.status(400).json({message: 'Receiver ID is required'});
+      }
+
+      // Check if receiver exists
+      const userExist = await User.findById(receiver);
+      if (!userExist) {
+         return res.status(404).json({message: 'No such user found'});
+      }
+
+      // Fetch fresh sender user (in case req.user doesn't have .pending_friends)
+      const senderUser = await User.findById(sender);
+
+      // Check if request already sent
+      const idx = userExist.pending_friends.findIndex(
+         (id) => id && id.equals(sender)
+      );
+      if (idx === -1) {
+         return res.status(400).json({
+            message: 'No connection request found from this user',
+         });
+      }
+
+      // Remove sender from receiver's pending friends
+      userExist.pending_friends.splice(idx, 1);
+
+      await userExist.save();
+
+      return res.status(200).json({
+         message: 'Connection request undone successfully',
+         userId: userExist._id,
+         friendId: senderUser._id,
+      });
+   } catch (error) {
+      console.error('Error undoing connection request:', error);
+      res.status(500).json({message: 'Internal server error'});
+   }
+};
+
 exports.acceptConnectionRequest = async (req, res) => {
    try {
       const {sender} = req.body;
@@ -349,10 +394,6 @@ exports.getConnections = async (req, res) => {
          return res.status(404).json({message: 'User not found'});
       }
 
-      if (!connections.friends || connections.friends.length === 0) {
-         return res.status(404).json({message: 'No connections found'});
-      }
-
       return res.status(200).json({
          message: 'Connections fetched successfully',
          connections: connections.friends,
@@ -371,9 +412,6 @@ exports.getPendingConnections = async (req, res) => {
       );
       if (!user) {
          return res.status(404).json({message: 'User not found'});
-      }
-      if (!user.pending_friends || user.pending_friends.length === 0) {
-         return res.status(404).json({message: 'No pending connections found'});
       }
       return res.status(200).json({
          message: 'Pending connections fetched successfully',
@@ -420,7 +458,7 @@ exports.removeConnection = async (req, res) => {
       await connectionUser.save();
       // Respond with success
       return res.status(200).json({
-         message: 'Connection removed successfully',
+         message: 'You both are no longer connected',
          userId: req.user._id,
          connectionId: connectionUser._id,
       });

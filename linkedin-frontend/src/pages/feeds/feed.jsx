@@ -44,7 +44,7 @@ const Feed = () => {
          {/* left div... */}
          <div className="w-[21%] sm:block  sm:w-[23%] hidden py-5 ">
             <div className="h-fit">
-               <ProfileCard data={profileData} />
+               <ProfileCard profileData={profileData} />
             </div>
             <div className="w-full my-5">
                <Card padding={1}>

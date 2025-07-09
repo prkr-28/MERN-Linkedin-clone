@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {ToastContainer, toast} from 'react-toastify';
 
 const ExperienceModel = ({
    profileData,
@@ -50,7 +51,7 @@ const ExperienceModel = ({
          !experience.duration ||
          !experience.location
       ) {
-         return alert('Please fill all the fields');
+         return toast.error('Please fill all the fields');
       }
       try {
          const updatedExperience = {
@@ -140,6 +141,8 @@ const ExperienceModel = ({
                </button>
             )}
          </div>
+
+         <ToastContainer position="bottom-right" autoClose={2000} />
       </div>
    );
 };

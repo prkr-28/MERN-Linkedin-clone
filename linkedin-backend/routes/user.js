@@ -35,6 +35,12 @@ router.post(
    userController.acceptConnectionRequest
 );
 
+router.put(
+   '/unDoConnectionRequest',
+   Authentication.auth,
+   userController.unDoConnectionRequest
+);
+
 router.get('/connections', Authentication.auth, userController.getConnections);
 router.get(
    '/pendingConnections',

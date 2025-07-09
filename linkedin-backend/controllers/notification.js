@@ -5,6 +5,7 @@ exports.getAllNotifications = async (req, res) => {
       const notifications = await NotificationModel.find({
          receiver: req.user._id,
       })
+         .limit(20)
          .sort({createdAt: -1})
          .populate('sender', '-password');
       if (!notifications || notifications.length === 0) {

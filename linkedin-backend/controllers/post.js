@@ -71,10 +71,6 @@ exports.getAllPosts = async (req, res) => {
          .sort({createdAt: -1})
          .populate('user', '-password');
 
-      if (!posts || posts.length === 0) {
-         return res.status(404).json({message: 'No posts found'});
-      }
-
       return res.status(200).json({
          message: 'Posts retrieved successfully',
          posts,
@@ -124,10 +120,6 @@ exports.getTop5Posts = async (req, res) => {
          .sort({createdAt: -1})
          .limit(5)
          .populate('user', '-password');
-
-      if (!posts || posts.length === 0) {
-         return res.status(404).json({message: 'No posts found for this user'});
-      }
 
       return res.status(200).json({
          message: 'Top 5 posts retrieved successfully',
