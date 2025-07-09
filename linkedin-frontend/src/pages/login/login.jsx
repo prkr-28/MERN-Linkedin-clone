@@ -19,12 +19,6 @@ const Login = (props) => {
    };
 
    const handleLogin = async () => {
-      if (
-         loginField.email.trim().length === 0 ||
-         loginField.password.trim().length === 0
-      ) {
-         return toast.error('Please fill all fields');
-      }
       await axios
          .post('http://localhost:4000/api/auth/login', loginField, {
             withCredentials: true,

@@ -46,7 +46,7 @@ exports.login = async (req, res) => {
    try {
       const {email, password} = req.body;
 
-      if (!email || !password) {
+      if (!email) {
          return res
             .status(400)
             .json({message: 'Email and password are required'});
@@ -56,6 +56,13 @@ exports.login = async (req, res) => {
       const user = await User.findOne({email: email});
       if (!user) {
          return res.status(400).json({message: 'Invalid email or password'});
+      }
+
+      if (user && !user.password) {
+         return res.status(400).json({
+            message:
+               'Please login with Google Because you have registered with Google',
+         });
       }
 
       // Compare the password

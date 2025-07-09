@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import './App.css';
 import Footer from './components/Footer/footer';
 import NavbarV1 from './components/Navbar/navbarV1';
@@ -14,7 +14,6 @@ import Message from './pages/message/message';
 import Profile from './pages/profile/myprofile';
 import Activity from './pages/activities/activity';
 import Notification from './pages/notifications/notifications';
-import axios from 'axios';
 import SingleActivity from './pages/singleactivity/singleActivity';
 
 const App = () => {

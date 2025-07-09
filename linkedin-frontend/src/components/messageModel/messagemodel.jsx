@@ -24,7 +24,7 @@ const MessageModel = ({userData, profileData}) => {
          toast.success(res.data.message);
          setInterval(() => {
             window.location.reload();
-         }, 1000);
+         }, 2000);
          setMessage('');
       } catch (error) {
          console.error('Error sending message:', error);
@@ -49,7 +49,7 @@ const MessageModel = ({userData, profileData}) => {
             className="w-full mt-5 bg-blue-500 text-white px-4 py-2 rounded-xl cursor-pointer hover:bg-blue-600">
             message
          </button>
-         <ToastContainer position="bottom-right" autoClose={500} />
+         <ToastContainer position="bottom-right" autoClose={1000} />
       </div>
    );
 };

@@ -5,10 +5,8 @@ exports.sendMessage = async (req, res) => {
       const senderId = req.user._id;
       const {conversationId, text, picture} = req.body;
 
-      if (!conversationId || !text) {
-         return res
-            .status(400)
-            .json({message: 'Conversation ID and text are required'});
+      if (!conversationId) {
+         return res.status(400).json({message: 'Conversation ID is required'});
       }
 
       // Create a new message
@@ -23,9 +21,7 @@ exports.sendMessage = async (req, res) => {
 
       const resConversation = await newMessage.populate('sender', '-password');
 
-      return res
-         .status(200)
-         .json({message: 'Message sent successfully', resConversation});
+      return res.status(200).json(resConversation);
    } catch (error) {
       console.error('Error sending message:', error);
       return res.status(500).json({message: 'Internal server error'});

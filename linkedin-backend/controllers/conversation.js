@@ -54,7 +54,7 @@ exports.getAllConversations = async (req, res) => {
          members: {$in: [userId]},
       })
          .populate('members', '-password')
-         .sort({updatedAt: -1});
+         .sort({createdAt: -1});
 
       if (!conversations || conversations.length === 0) {
          return res.status(404).json({message: 'No conversations found'});
